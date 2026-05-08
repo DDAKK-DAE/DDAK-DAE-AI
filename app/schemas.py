@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, conint, constr
 
@@ -17,3 +17,30 @@ class ChallengePostRequest(BaseModel):
 class ChallengePostResponse(BaseModel):
     description: str
     hashtags: List[str] = Field(..., min_items=5, max_items=5)
+
+
+# ── 크루 챌린지 추천 ────────────────────────────────────────
+
+class TrendingChallenge(BaseModel):
+    id: str
+    title: str
+    category: str
+    locationText: str
+    hashtags: Optional[List[str]] = None
+
+
+class CrewRecommendationRequest(BaseModel):
+    crewId: str
+    memberCategoryFrequency: Dict[str, int]
+    trendingChallenges: List[TrendingChallenge]
+
+
+class RecommendationItem(BaseModel):
+    challengeId: str
+    title: str
+    category: str
+    reason: str
+
+
+class CrewRecommendationResponse(BaseModel):
+    recommendations: List[RecommendationItem] = Field(..., min_items=1, max_items=3)
