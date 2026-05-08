@@ -5,4 +5,5 @@ from app.api.crew_routes import router as crew_router
 
 router = APIRouter()
 router.include_router(challenge_router)
+router.include_router(chemistry_router)
 router.include_router(crew_router)
