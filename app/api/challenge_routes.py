@@ -18,7 +18,10 @@ def verify_internal_api_key(
     x_internal_api_key: Optional[str] = Security(internal_api_key_header),
 ) -> None:
     if not settings.INTERNAL_API_KEY:
-        return
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="INTERNAL_API_KEY is not configured",
+        )
     if not secrets.compare_digest(x_internal_api_key or "", settings.INTERNAL_API_KEY):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

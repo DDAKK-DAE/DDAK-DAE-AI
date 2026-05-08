@@ -26,7 +26,12 @@ def _normalize_hashtags(values: Any, payload: Dict[str, Any]) -> List[str]:
         "동네챌린지",
     ]
 
-    raw_values = values if isinstance(values, list) else re.split(r"[\s,]+", values or "")
+    if isinstance(values, list):
+        raw_values = values
+    elif isinstance(values, str):
+        raw_values = re.split(r"[\s,]+", values)
+    else:
+        raw_values = []
     normalized, seen = [], set()
 
     for raw in raw_values + fallbacks:
@@ -79,16 +84,19 @@ async def generate_challenge_post(
         '- JSON 형식으로만 응답: {"description": "...", "hashtags": ["#...", ...]}'
     )
 
-    response = await get_client().chat.completions.create(
-        model=MODEL,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
-        ],
-        response_format={"type": "json_object"},
-        temperature=0.8,
-        max_tokens=600,
-    )
+    try:
+        response = await get_client().chat.completions.create(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.8,
+            max_tokens=600,
+        )
+    except Exception as exc:
+        raise LLMServiceError("LLM request failed") from exc
 
     content = response.choices[0].message.content
     if not content:
