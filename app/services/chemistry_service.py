@@ -69,8 +69,9 @@ async def analyze_group_chemistry(req: ChemistryRequest) -> Dict[str, Any]:
     summary = raw.get("summary", "")
     comment = raw.get("comment", "")
 
-    if not isinstance(score, int) or not (0 <= score <= 100):
+    if not isinstance(score, (int, float)) or not (0 <= score <= 100):
         raise LLMServiceError("invalid score in LLM response")
+    score = int(score)
     if not isinstance(summary, str) or len(summary.strip()) < 5:
         raise LLMServiceError("summary is too short or missing")
     if not isinstance(comment, str) or len(comment.strip()) < 10:
