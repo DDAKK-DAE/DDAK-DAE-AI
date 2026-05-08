@@ -1,6 +1,6 @@
 # Reels Challenge - AI Server
 
-챌린지 글 자동 작성 / 그룹 케미 분석 / 크루 챌린지 추천을 담당하는 Claude API 기반 FastAPI 서버.
+챌린지 글 자동 작성 / 그룹 케미 분석 / 크루 챌린지 추천을 담당하는 OpenAI API 기반 FastAPI 서버.
 
 ## 로컬 실행
 
