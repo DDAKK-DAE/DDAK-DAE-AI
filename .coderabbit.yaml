@@ -1,0 +1,45 @@
+# CodeRabbit 설정
+# https://docs.coderabbit.ai/getting-started/configure-coderabbit
+
+language: "ko-KR"
+
+reviews:
+  profile: "chill"
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+
+  path_filters:
+    - "!**/*.md"
+    - "!**/generated/**"
+    - "!**/__pycache__/**"
+    - "!**/venv/**"
+    - "!**/*.pyc"
+
+  instructions: |
+    이 프로젝트는 1박 2일 해커톤용 FastAPI AI 서버입니다.
+    OpenAI API를 사용하며 챌린지 글 자동 작성, 그룹 케미 분석, 크루 챌린지 추천 기능을 담당합니다.
+
+    ## 리뷰 우선순위
+    1. 기능 동작 여부 (발표 데모 기준)
+    2. OpenAI API 호출 오류 처리
+    3. 요청/응답 스키마(Pydantic) 정합성
+    4. 패키지 구조 준수 (routes 얇게, 비즈니스 로직은 services)
+
+    ## 리뷰 제외 항목 (해커톤 특성상)
+    - 테스트 커버리지 요구 금지
+    - 마이크로 최적화 지적 금지
+    - 과도한 추상화·확장성 제안 금지
+
+    ## 절대 통과 금지 (BLOCKING)
+    - 환경 변수 하드코딩 (API 키 등)
+    - OpenAI API 키 또는 INTERNAL_API_KEY 노출
+    - async 함수에서 동기 블로킹 호출 사용
+
+    ## 언어
+    - 모든 리뷰 코멘트는 한국어로 작성
+
+chat:
+  auto_reply: true
