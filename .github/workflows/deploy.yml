@@ -1,0 +1,38 @@
+name: Deploy AI Server to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          INTERNAL_API_KEY: ${{ secrets.INTERNAL_API_KEY }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: OPENAI_API_KEY,INTERNAL_API_KEY
+          script: |
+            set -e
+
+            # AI 레포 최신 코드 pull
+            git -C ~/hackathon/ddak-dae-ai pull origin main
+
+            # FastAPI 컨테이너만 재빌드 & 재시작
+            cd ~/hackathon
+            docker-compose -f docker-compose.prod.yml build ai-server
+            docker-compose -f docker-compose.prod.yml up -d ai-server
+
+            # 오래된 이미지 정리
+            docker image prune -f
+
+            echo "✅ AI Server deploy completed: $(date)"
