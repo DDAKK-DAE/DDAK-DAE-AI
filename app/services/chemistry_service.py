@@ -56,14 +56,21 @@ async def analyze_group_chemistry(req: ChemistryRequest) -> Dict[str, Any]:
     except Exception as exc:
         raise LLMServiceError("LLM request failed") from exc
 
-    content = response.choices[0].message.content
-    if not content:
+    choices = getattr(response, "choices", None)
+    if not choices or not getattr(choices[0], "message", None):
+        raise LLMServiceError("empty LLM response")
+
+    content = choices[0].message.content
+    if not isinstance(content, str) or not content.strip():
         raise LLMServiceError("empty LLM response")
 
     try:
         raw = json.loads(content)
     except json.JSONDecodeError as exc:
         raise LLMServiceError("LLM response was not valid JSON") from exc
+
+    if not isinstance(raw, dict):
+        raise LLMServiceError("LLM response was not valid JSON")
 
     score = raw.get("score")
     summary = raw.get("summary", "")
