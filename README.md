@@ -5,7 +5,7 @@
 ## 로컬 실행
 
 ```bash
-python -m venv venv
+py -3.10 -m venv venv
 venv\Scripts\activate        # Windows
 # source venv/bin/activate   # macOS/Linux
 
